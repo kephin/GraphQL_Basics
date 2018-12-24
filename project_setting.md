@@ -6,7 +6,6 @@ We need to add babel packages to our project with
 
 ```zsh
 npm install @babel/core @babel/cli @babel/preset-env @babel/node
-
 npm install nodemon
 ```
 
@@ -16,20 +15,20 @@ npm install nodemon
 - @babel/node: the usage of babel with node
 - nodemon: reloads node for us automatically when one of our files is changed
 
-```javascrtip
+```javascript
 // .babelrc
 {
   "presets": ["@babel/preset-env"]
 }
 ```
 
-Add `nodemon --exec babel-node src/server.js` as the startscript. This tells the nodemon package to watch for file changes, reload when it detects them and use babel-node to run the file src/server.js. We’ll use this while developing locally.
+- Add `nodemon --exec babel-node src/server.js` as the start script - This tells the nodemon package to watch for file changes, reload when it detects them and use babel-node to run the file src/server.js. We’ll use this while developing locally.
 
-Add `babel src —-out-dir dist` as the build script. This tells babel to compile the files from the src directory and place them in the dist directory.
+- Add `babel src —-out-dir dist` as the build script - This tells babel to compile the files from the src directory and place them in the dist directory.
 
-Add `node dist/server.js` as the serve script. This enables us to run our compiled code on a server, the reason we are not just using nodemon for this is it uses quite a bit more memory than just using node and adds some startup time to the process which is fine for some applications but can be a huge performance hit in others.
+- Add `node dist/server.js` as the serve script - This enables us to run our compiled code on a server, the reason we are not just using nodemon for this is it uses quite a bit more memory than just using node and adds some startup time to the process which is fine for some applications but can be a huge performance hit in others.
 
-```json
+```javascript
 //package.json
 {
   "name": "graphql_basics",
@@ -70,3 +69,8 @@ Add `node dist/server.js` as the serve script. This enables us to run our compil
 //.env
 NODE_PATH=src
 ```
+
+---
+References:
+
+1. Will Willems: [Using babel 7 with node](https://hackernoon.com/using-babel-7-with-node-7e401bc28b04)
