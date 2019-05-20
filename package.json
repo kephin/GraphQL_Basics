@@ -4,7 +4,7 @@
   "description": "GraphQL Basics",
   "main": "src/server.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js",
+    "start": "nodemon src/server.js --exec babel-node --ext js,graphql",
     "build": "babel src —-out-dir dist",
     "serve": "node dist/server.js"
   },
