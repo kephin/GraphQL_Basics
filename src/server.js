@@ -1,4 +1,5 @@
 import { GraphQLServer } from 'graphql-yoga'
+import uuidv4 from 'uuid/v4'
 
 const posts = [
   { id: '123', title: 'GraphQL', body: 'GraphQL rocks', published: true, authorId: '111' },
@@ -30,6 +31,12 @@ const typeDefs = `
     posts(query: String): [Post!]!
     comments: [Comment!]!
   }
+  type Mutation {
+    createUser(name: String!, email: String!, age: Int): User!
+    createPost(title: String!, body: String!, published: Boolean!, authorId: ID!): Post!
+    createComment(text: String!, authorId: ID!, postId: ID!): Comment!
+  }
+
   type User {
     id: ID!
     name: String!
@@ -86,6 +93,39 @@ const resolvers = {
     },
     comments(parent, args, ctx, info) {
       return comments
+    },
+  },
+  Mutation: {
+    createUser(parent, args, ctx, info) {
+      const isEmailTaken = users.some(user => user.email === args.email)
+      if (isEmailTaken) throw new Error('Email is taken')
+      const newUser = {
+        id: uuidv4(),
+        ...args,
+      }
+      users.push(newUser)
+      return newUser
+    },
+    createPost(parent, args, ctx, info) {
+      const userExists = users.some(user => user.id === args.authorId)
+      if (!userExists) throw new Error('User not found')
+      const newPost = {
+        id: uuidv4(),
+        ...args,
+      }
+      posts.push(newPost)
+      return newPost
+    },
+    createComment(parent, args, ctx, info) {
+      const userExists = users.some(user => user.id === args.authorId)
+      const postExists = posts.some(post => post.id === args.postId && post.published)
+      if (!postExists) throw Error('Unable to find user or post')
+      const newComment = {
+        id: uuidv4(),
+        ...args,
+      }
+      comments.push(newComment)
+      return newComment
     },
   },
   User: {
