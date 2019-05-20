@@ -32,11 +32,26 @@ const typeDefs = `
     comments: [Comment!]!
   }
   type Mutation {
-    createUser(name: String!, email: String!, age: Int): User!
-    createPost(title: String!, body: String!, published: Boolean!, authorId: ID!): Post!
-    createComment(text: String!, authorId: ID!, postId: ID!): Comment!
+    createUser(user: createUserInput!): User!
+    createPost(post: createPostInput!): Post!
+    createComment(comment: createCommentInput!): Comment!
   }
-
+  input createUserInput {
+    name: String!,
+    email: String!,
+    age: Int
+  }
+  input createPostInput {
+    title: String!,
+    body: String!,
+    published: Boolean!,
+    authorId: ID!
+  }
+  input createCommentInput {
+    text: String!,
+    authorId: ID!,
+    postId: ID!
+  }
   type User {
     id: ID!
     name: String!
@@ -97,32 +112,32 @@ const resolvers = {
   },
   Mutation: {
     createUser(parent, args, ctx, info) {
-      const isEmailTaken = users.some(user => user.email === args.email)
+      const isEmailTaken = users.some(user => user.email === args.user.email)
       if (isEmailTaken) throw new Error('Email is taken')
       const newUser = {
         id: uuidv4(),
-        ...args,
+        ...args.user,
       }
       users.push(newUser)
       return newUser
     },
     createPost(parent, args, ctx, info) {
-      const userExists = users.some(user => user.id === args.authorId)
+      const userExists = users.some(user => user.id === args.post.authorId)
       if (!userExists) throw new Error('User not found')
       const newPost = {
         id: uuidv4(),
-        ...args,
+        ...args.post,
       }
       posts.push(newPost)
       return newPost
     },
     createComment(parent, args, ctx, info) {
-      const userExists = users.some(user => user.id === args.authorId)
-      const postExists = posts.some(post => post.id === args.postId && post.published)
+      const userExists = users.some(user => user.id === args.comment.authorId)
+      const postExists = posts.some(post => post.id === args.comment.postId && post.published)
       if (!postExists) throw Error('Unable to find user or post')
       const newComment = {
         id: uuidv4(),
-        ...args,
+        ...args.comment,
       }
       comments.push(newComment)
       return newComment
