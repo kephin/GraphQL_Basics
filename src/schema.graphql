@@ -16,24 +16,24 @@ type Mutation {
   deleteComment(commentId: ID!): Comment!
 }
 input CreateUserInput {
-  name: String!,
-  email: String!,
+  name: String!
+  email: String!
   age: Int
 }
 input UpdateUserInput {
-  name: String,
-  email: String,
+  name: String
+  email: String
   age: Int
 }
 input CreatePostInput {
-  title: String!,
-  body: String!,
-  published: Boolean!,
+  title: String!
+  body: String!
+  published: Boolean!
   authorId: ID!
 }
 input CreateCommentInput {
-  text: String!,
-  authorId: ID!,
+  text: String!
+  authorId: ID!
   postId: ID!
 }
 type User {
