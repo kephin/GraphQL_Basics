@@ -23,6 +23,17 @@ const Mutation = {
     db.comments = db.comments.filter(comment => comment.authorId !== args.userId)
     return user
   },
+  updateUser(parent, args, { db }, info) {
+    const { userId, data } = args
+    const isEmailTaken = db.users.some(user => user.email === data.email)
+    if (isEmailTaken) throw Error('Email is taken')
+
+    const user = db.users.find(user => user.id === userId)
+    const userIndex = db.users.indexOf(user)
+    const updatedUser = { ...user, ...data }
+    db.users.splice(userIndex, 1, updatedUser)
+    return updatedUser
+  },
   createPost(parent, args, { db }, info) {
     const userExists = db.users.some(user => user.id === args.post.authorId)
     if (!userExists) throw new Error('User not found')
