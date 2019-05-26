@@ -1,8 +1,8 @@
 type Query {
   config: Config!
-  user(id: ID!): User!
+  user(userId: ID!): User!
   users: [User!]!
-  post(id: ID!): Post!
+  post(postId: ID!): Post!
   posts(query: String): [Post!]!
   comments: [Comment!]!
 }

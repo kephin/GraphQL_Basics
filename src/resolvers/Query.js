@@ -8,7 +8,7 @@ const Query = {
     return db.users
   },
   user(parent, args, { db }, info) {
-    return db.users.find(user => user.id === args.id)
+    return db.users.find(user => user.id === args.userId)
   },
   posts(parent, args, { db }, info) {
     if (!args.query) return db.posts
@@ -19,7 +19,7 @@ const Query = {
       .includes(args.query.toLowerCase()))
   },
   post(parent, args, { db }, info) {
-    return db.posts.find(post => post.id === args.id)
+    return db.posts.find(post => post.id === args.postId)
   },
   comments(parent, args, { db }, info) {
     return db.comments
