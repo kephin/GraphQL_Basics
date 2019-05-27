@@ -75,6 +75,14 @@ const Mutation = {
     if (!comment) throw Error('Comment not found')
     db.comments = db.comments.filter(comment => comment.id !== args.commentId)
     return comment
+  },
+  updateComment(parent, args, { db }, info) {
+    const { commentId, data } = args
+    const comment = db.comments.find(comment => comment.id === commentId)
+    const index = db.comments.indexOf(comment)
+    const updatedComment = { ...comment, ...data }
+    db.comments.splice(index, 1, updatedComment)
+    return updatedComment
   }
 }
 
