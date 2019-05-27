@@ -51,6 +51,14 @@ const Mutation = {
     db.comments = db.comments.filter(comment => comment.postId !== args.postId)
     return post
   },
+  updatePost(parent, args, { db }, info) {
+    const { postId, data } = args
+    const post = db.posts.find(post => post.id === postId)
+    const index = db.posts.indexOf(post)
+    const updatedPost = { ...post, ...data }
+    db.posts.splice(index, 1, updatedPost)
+    return updatedPost
+  },
   createComment(parent, args, { db }, info) {
     const userExists = db.users.some(user => user.id === args.comment.authorId)
     const postExists = db.posts.some(post => post.id === args.comment.postId && post.published)
