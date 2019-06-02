@@ -61,7 +61,7 @@ const Mutation = {
     db.posts.splice(index, 1, updatedPost)
     return updatedPost
   },
-  createComment(parent, args, { db }, info) {
+  createComment(parent, args, { db, pubsub }, info) {
     const userExists = db.users.some(user => user.id === args.comment.authorId)
     const postExists = db.posts.some(post => post.id === args.comment.postId && post.published)
     if (!postExists) throw new Error('Unable to find user or post')
@@ -70,6 +70,7 @@ const Mutation = {
       ...args.comment,
     }
     db.comments.push(newComment)
+    pubsub.publish(`comment-${args.comment.postId}`, { comment: newComment })
     return newComment
   },
   deleteComment(parent, args, { db }, info) {
