@@ -44,7 +44,12 @@ const Mutation = {
     }
     db.posts.push(newPost)
     if (args.post.published) {
-      pubsub.publish('post', { post: newPost })
+      pubsub.publish('post', {
+        post: {
+          mutation: 'CREATE',
+          data: newPost
+        }
+      })
     }
     return newPost
   },
