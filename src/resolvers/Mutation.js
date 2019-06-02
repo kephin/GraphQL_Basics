@@ -35,7 +35,7 @@ const Mutation = {
     db.users.splice(userIndex, 1, updatedUser)
     return updatedUser
   },
-  createPost(parent, args, { db }, info) {
+  createPost(parent, args, { db, pubsub }, info) {
     const userExists = db.users.some(user => user.id === args.post.authorId)
     if (!userExists) throw new Error('User not found')
     const newPost = {
@@ -43,6 +43,9 @@ const Mutation = {
       ...args.post,
     }
     db.posts.push(newPost)
+    if (args.post.published) {
+      pubsub.publish('post', { post: newPost })
+    }
     return newPost
   },
   deletePost(parent, args, { db }, info) {
