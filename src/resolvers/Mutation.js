@@ -64,7 +64,7 @@ const Mutation = {
   createComment(parent, args, { db, pubsub }, info) {
     const userExists = db.users.some(user => user.id === args.comment.authorId)
     const postExists = db.posts.some(post => post.id === args.comment.postId && post.published)
-    if (!postExists) throw new Error('Unable to find user or post')
+    if (!postExists || !userExists) throw new Error('Unable to find user or post')
     const newComment = {
       id: uuidv4(),
       ...args.comment,
