@@ -53,11 +53,19 @@ const Mutation = {
     }
     return newPost
   },
-  deletePost(parent, args, { db }, info) {
+  deletePost(parent, args, { db, pubsub }, info) {
     const post = db.posts.find(post => post.id === args.postId)
     if (!post) throw new Error('Post not found')
     db.posts = db.posts.filter(post => post.id !== args.postId)
     db.comments = db.comments.filter(comment => comment.postId !== args.postId)
+    if (post.published) {
+      pubsub.publish('post', {
+        post: {
+          mutation: 'DELETE',
+          data: post,
+        }
+      })
+    }
     return post
   },
   updatePost(parent, args, { db }, info) {
