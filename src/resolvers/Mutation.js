@@ -68,13 +68,38 @@ const Mutation = {
     }
     return post
   },
-  updatePost(parent, args, { db }, info) {
+  updatePost(parent, args, { db, pubsub }, info) {
     const { postId, data } = args
     const post = db.posts.find(post => post.id === postId)
     if (!post) throw new Error('Post not found')
     const index = db.posts.indexOf(post)
     const updatedPost = { ...post, ...data }
     db.posts.splice(index, 1, updatedPost)
+
+    // publish
+    if (post.published && !updatedPost.published) { // delete
+      pubsub.publish('post', {
+        post: {
+          mutation: 'DELETE',
+          data: post
+        }
+      })
+    } else if (post.published && updatedPost.published) { // update
+      pubsub.publish('post', {
+        post: {
+          mutation: 'UPDATE',
+          data: updatedPost
+        }
+      })
+    } else if (!post.published && updatedPost.published) { // create
+      pubsub.publish('post', {
+        post: {
+          mutation: 'CREATE',
+          data: updatedPost
+        }
+      })
+    }
+
     return updatedPost
   },
   createComment(parent, args, { db, pubsub }, info) {
